@@ -1,0 +1,124 @@
+ALTER TABLE book_kart
+ADD FOREIGN KEY (user_id)
+REFERENCES profile_table(user_id);
+
+
+ALTER TABLE book_kart
+ADD FOREIGN KEY (book_id)
+REFERENCES book_tbl(book_id);
+
+
+
+INSERT INTO `book_store`.`book_tbl` (`book_id`, `book_name`, `book_type`, `book_rate`) 
+VALUES ('103', 'The Great Gatsby', 'drama', '749'), 
+('104', 'The Fault in Our Stars', 'drama', '799'),
+('105','Half Girlfriend','romance','1500'),
+('106','2 states','romance','550'),
+('107','I Too Had a Love Story','romance','749'),
+('108','outlander','romance','799'),
+('109','Wings of Fire','biographies','1500'),
+('110','Steve Jobs','biographies','550'),
+('111','I Am Malala','biographies','749'),
+('112','The Diary of a Young Girl','biographies','799'),
+('113','Justice League, Vol. 1','comics','999'),
+('114','Maus','comics','559'),
+('115','Arkham Asylum','comics','1299'),
+('116','X-Men: Days of Future Past','comics','1799');
+
+
+
+"DELETE FROM `book_store`.`book_kart` WHERE `book_kart`.`kart_id` = 21"
+
+
+
+SELECT * FROM `book_kart` WHERE delivery_time >= CURRENT_DATE;
+
+
+DELETE FROM Customers
+WHERE CustomerName='Alfreds Futterkiste';
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////insert////////////
+
+
+
+<?php
+error_reporting(E_ALL ^ E_DEPRECATED);
+$servername = "localhost";
+$username = "root";
+$password = "";
+$db_name = "book_store";
+$name=$_POST['name'];
+$email=$_POST['email'];
+$address=$_POST['address'];
+$pass=md5($_POST['password']);
+$profile=$_FILES['profile']['name'];
+ // $conn = mysql_connect("$servername", "$username", "$password");
+ $con=mysqli_connect("$servername","$username","$password","$db_name");
+ // mysql_select_db("$db_name");
+ $qry="SELECT email FROM profile_table WHERE email='$email'";
+$qry1=mysqli_query($con,$qry);
+// $r=mysql_num_rows ($qry1);
+if(! mysql_num_rows ($qry1)==0)
+{
+	// echo("<h1>".$email." is already registered</h1><a href='user_sign_up.html'><h1>go back</h1></a>");
+  echo("<script>alert('this Email ID is used by another user');window.location='user_sign_up.html';</script>");
+}
+else
+{
+if(isset($_FILES['profile'])){
+      $errors= array();
+      $file_name = $_FILES['profile']['name'];
+      $file_size =$_FILES['profile']['size'];
+      $file_tmp =$_FILES['profile']['tmp_name'];
+      $file_type=$_FILES['profile']['type'];
+      $explode=explode('.',$file_name);
+      $file_ext=strtolower(end($explode));
+    
+    
+      $img_array= array('user_profile_pic/',$name,'.',$file_ext);
+    $img_name=implode('',$img_array);
+      $expensions= array("jpeg","jpg","png");
+     //checks for the extentions 
+      if(in_array($file_ext,$expensions)=== false){
+         $errors[]="extension not allowed, please choose a JPEG or PNG file.";
+      }
+      //checks for the size
+      if($file_size > 2097152){
+         $errors[]='File size must be excately 2 MB';
+      }
+      
+      if(empty($errors)==true){
+        move_uploaded_file($file_tmp,$img_name);
+         echo "Success";
+         echo("<script>alert('you have successfully signed in');window.location='user_login.html';</script>");
+      }else{
+         // print_r($errors);
+         echo("<script>alert('$errors[0]');window.location='user_sign_up.html';</script>");
+      }
+   }
+
+
+  if(! $conn )
+   {
+     die('Could not connect:<br>'. mysql_error() );
+   }
+   
+ // mysql_select_db("$db_name");
+$qry2="INSERT into profile_table (user_name,email,password,address,profile_pic) values('$name','$email','$pass','$address','$img_name')";
+$check_qry=mysqli_query($con,$qry2);
+if(! $check_qry)
+{
+	die('<br>please check your inputs<br>' . mysql_error());
+}
+// header("location:user_login.html");
+}
+?>
